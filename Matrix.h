@@ -62,6 +62,8 @@
 template <typename T, size_t _CapacityIncrement = 2>
 class Matrix;
 
+typedef Matrix<double> Matrixd;
+
 template <typename T>
 class Determinant;
 
@@ -160,7 +162,7 @@ public:
      * 
      * @param expr 类MATLAB的矩阵定义字符串
      */
-    Matrix(const std::string &expr)
+    explicit Matrix(const std::string &expr)
     {
         //错误标识打印
         auto flagPrint = [](const std::string &str, size_t flagPos)
@@ -302,7 +304,7 @@ public:
      * 
      * @param iList 嵌套的初始化列表
      */
-    Matrix(std::initializer_list<std::initializer_list<T>> iList)
+    explicit Matrix(std::initializer_list<std::initializer_list<T>> iList)
     {
         uCol = (*iList.begin()).size();
         uRow = iList.size();
