@@ -10,7 +10,7 @@
 //#     矩阵元素访问函数 operator()() 行列序号默认从1开始，若要使用0作为序号起始，请在包含本
 //# 头文件前定义宏 MATRIX_INDEX_START_AT_0:
 //#
-//#     #define MATRIX_INDEX_START_AT_0
+//#      MATRIX_INDEX_START_AT_0
 //#
 //#																	2020/08/05
 //#																	Shepard Liu
@@ -50,15 +50,6 @@
 #include <random>
 #include <chrono>
 
-#define MAT_LEFT 0
-#define MAT_RIGHT 1
-#define MAT_ABOVE 2
-#define MAT_BELOW 3
-#define MAT_TOPLEFT 4
-#define MAT_TOPRIGHT 5
-#define MAT_BOTLEFT 6
-#define MAT_BOTRIGHT 7
-
 template <typename T, size_t _CapacityIncrement = 2>
 class Matrix;
 
@@ -91,6 +82,19 @@ private:
     static const size_t uCapacityIncrement = _CapacityIncrement > 1 ? _CapacityIncrement : 2; //容量倍增系数
 
 public:
+    enum Direction
+    {
+        LEFT,
+        RIGHT,
+        ABOVE,
+        BELOW,
+        TOPLEFT,
+        TOPRIGHT,
+        BOTLEFT,
+        BOTRIGHT,
+    };
+
+public:
     //构造函数
 
     /**
@@ -98,7 +102,9 @@ public:
      * 
      * 构造0行0列无数据的空矩阵
      */
-    Matrix() : Matrix(0, 0) {}
+    Matrix() : Matrix(0, 0)
+    {
+    }
 
     /**
         @brief 无数据构造函数：
@@ -534,14 +540,20 @@ private:
 
 public:
     /**
-        在矩阵中插入一行数据，可能会引起数据扩增
-        @param pos			要插入到的行序号，从1开始
+        @brief 在矩阵中插入一行数据，可能会引起数据扩增
+
+        若定义了MATRIX_INDEX_START_AT_0,则行列序号从0开始，
+        否则从1开始。
+
+        @param pos			要插入到的行序号
         @param pNewRowData	要插入的行数据的指针
         @param dataSize		要插入的行数据的个数，若少于列数，将使用0补齐
-        @return				插入操作是否成功
     */
     void InsertRow(size_t pos, const T *pNewRowData, size_t dataSize)
     {
+#ifdef MATRIX_INDEX_START_AT_0
+        ++pos;
+#endif
         //检查位置是否合法
         assert(pos <= uRow + 1 && pos != 0);
 
@@ -569,17 +581,38 @@ public:
 
 public:
     /**
-        在矩阵中插入一列数据，可能会引起数据扩增
-        @param pos			要插入到的列序号，从1开始
+        @brief 在矩阵中插入一行数据，可能会引起数据扩增
+
+        若定义了MATRIX_INDEX_START_AT_0,则行列序号从0开始，
+        否则从1开始。
+
+        @param pos			要插入到的行序号
+        @param pNewRowData	要插入的行数据的指针
+        @param dataSize		要插入的行数据的个数，若少于列数，将使用0补齐
+    */
+    void InsertRow(size_t pos, const std::vector<T> &rowData)
+    {
+        InsertRow(pos, rowData.data(), rowData.size());
+    }
+
+public:
+    /**
+        @brief 在矩阵中插入一列数据，可能会引起数据扩增
+
+        若定义了MATRIX_INDEX_START_AT_0,则行列序号从0开始，
+        否则从1开始。
+
+        @param pos			要插入到的列序号
         @param pNewRowData	要插入的列数据的指针
         @param dataSize		要插入的列数据的个数，若少于行数，将使用0补齐
-        @return				插入操作是否成功
     */
     bool InsertColumn(size_t pos, const T *pNewColData, size_t dataSize)
     {
+#ifdef MATRIX_INDEX_START_AT_0
+        ++pos;
+#endif
         //检查插入位置是否合法
-        if (pos > uCol + 1 || pos == 0)
-            return false;
+        assert(pos <= uCol + 1 && pos != 0);
 
         //实际添加的数据个数n
         size_t n = uRow < dataSize ? uRow : dataSize;
@@ -616,51 +649,136 @@ public:
 
 public:
     /**
-        矩阵最下方添加一行数据，可能会引起数据扩增
-        @param pNewRowData	要添加的行数据的指针
-        @param dataSize		要添加的行数据的个数，若少于列数，将使用0补齐
-        @return				加行操作是否成功
+        @brief 在矩阵中插入一列数据，可能会引起数据扩增
+
+        若定义了MATRIX_INDEX_START_AT_0,则行列序号从0开始，
+        否则从1开始。
+
+        @param pos		要插入到的列序号
+        @param colData	要插入的列数据
     */
-    bool AddRow(const T *pNewRowData, size_t dataSize)
+    void InsertColumn(size_t pos, const std::vector<T> &colData)
     {
-        return InsertRow(uRow + 1, pNewRowData, dataSize);
+        InsertColumn(pos, colData.data(), colData.size());
     }
 
 public:
     /**
-        矩阵最右侧添加一列数据，可能会引起数据扩增
-        @param pNewRowData	要添加的列数据的指针
-        @param dataSize		要添加的列数据的个数，若少于行数，将使用0补齐
-        @return				加列操作是否成功
+        @brief 矩阵最下方添加一行数据，可能会引起数据扩增
+
+        @param pNewRowData	要添加的行数据的指针
+        @param dataSize		要添加的行数据的个数，若少于列数，将使用0补齐
     */
-    bool AddColumn(const T *pNewColData, size_t dataSize)
+    void AddRow(const T *pNewRowData, size_t dataSize)
     {
-        return InsertColumn(uCol + 1, pNewColData, dataSize);
+#ifdef MATRIX_INDEX_START_AT_0
+        InsertRow(uRow, pNewRowData, dataSize);
+#else
+        InsertRow(uRow + 1, pNewRowData, dataSize);
+#endif
+    }
+
+public:
+    /**
+        @brief 矩阵最下方添加一行数据，可能会引起数据扩增
+
+        @param rowData	要添加的行数据
+    */
+    void AddRow(const std::vector<T> &rowData)
+    {
+#ifdef MATRIX_INDEX_START_AT_0
+        InsertRow(uRow, rowData.data(), rowData.size());
+#else
+        InsertRow(uRow + 1, rowData.data(), rowData.size());
+#endif
+    }
+
+public:
+    /**
+        @brief 矩阵最右侧添加一列数据，可能会引起数据扩增
+
+        @param pNewColData	要添加的列数据的指针
+        @param dataSize		要添加的列数据的个数，若少于行数，将使用0补齐
+    */
+    void AddColumn(const T *pNewColData, size_t dataSize)
+    {
+#ifdef MATRIX_INDEX_START_AT_0
+        InsertColumn(uCol, pNewColData, dataSize);
+#else
+        InsertColumn(uCol + 1, pNewColData, dataSize);
+#endif
+    }
+
+public:
+    /**
+        @brief 矩阵最右侧添加一列数据，可能会引起数据扩增
+
+        @param colData	要添加的列数据的指针
+    */
+    void AddColumn(const std::vector<T> &colData)
+    {
+#ifdef MATRIX_INDEX_START_AT_0
+        InsertColumn(uCol, colData.data(), colData.size());
+#else
+        InsertColumn(uCol + 1, colData.data(), colData.size());
+#endif
+    }
+
+public:
+    /**
+     * @brief 获取矩阵区块
+     * 
+     *  若定义了MATRIX_INDEX_START_AT_0,则行列序号从0开始，
+     *  否则从1开始。
+     * 
+     * @param rowStart      区块行起始序号
+     * @param colStart      区块列起始序号
+     * @param rowSpan       区块行数
+     * @param colSpan       区块列数
+     * @return Matrix<T>    区块拷贝得到的矩阵
+     */
+    Matrix<T> Block(size_t rowStart, size_t colStart, size_t rowSpan, size_t colSpan)
+    {
+        //这个V0.3新加的函数用0为序号基准
+#ifndef MATRIX_INDEX_START_AT_0
+        --rowStart;
+        --colStart;
+#endif
+        assert(rowStart > 0 && rowStart <= uRow && colStart > 0 && colStart <= uCol);
+        rowSpan = rowSpan + rowStart > uRow ? uRow - rowStart : rowSpan;
+        colSpan = colSpan + colStart > uCol ? uCol - colStart : colSpan;
+
+        Matrix<T> blockMat(rowSpan, colSpan);
+        for (size_t i = 0; i < rowSpan; ++i)
+            for (size_t j = 0; j < colSpan; ++j)
+                blockMat.ElemAt0(i, j) = this->ElemAt0(i + rowStart, j + colStart);
+
+        return blockMat;
     }
 
 public:
     /**
         @brief 将该矩阵与参数中的矩阵合并
 
-        MAT_LEFT		0	将mat置于左侧合并，要求行数相同
-        MAT_RIGHT	    1	将mat置于右侧合并，要求行数相同
-        MAT_ABOVE	    2	将mat置于上方合并，要求列数相同
-        MAT_BELOW	    3	将mat置于下方合并，要求列数相同
-        MAT_TOPLEFT	    4	将mat置于左上角合并，其余位置补0
-        MAT_TOPRIGHT	5	将mat置于右上角合并，其余位置补0
-        MAT_BOTLEFT	    6	将mat置于左下角合并，其余位置补0
-        MAT_BOTRIGHT	7	将mat置于右下角合并，其余位置补0
+        LEFT	    将mat置于左侧合并，要求行数相同
+        RIGHT	    将mat置于右侧合并，要求行数相同
+        ABOVE	    将mat置于上方合并，要求列数相同
+        BELOW	    将mat置于下方合并，要求列数相同
+        TOPLEFT	    将mat置于左上角合并，其余位置补0
+        TOPRIGHT    将mat置于右上角合并，其余位置补0
+        BOTLEFT	    将mat置于左下角合并，其余位置补0
+        BOTRIGHT	将mat置于右下角合并，其余位置补0
 
-        @param mat			要合并的第二个矩阵
-        @param DIRECTION	第二个矩阵的相对位置
+        @param mat	要合并的第二个矩阵
+        @param d	第二个矩阵的相对位置
 
         @return				合并的矩阵
     */
-    Matrix<T> CombineWith(const Matrix<T> &mat, const size_t DIRECTION) const
+    Matrix<T> CombineWith(const Matrix<T> &mat, Direction d) const
     {
-        switch (DIRECTION)
+        switch (d)
         {
-        case MAT_LEFT:
+        case LEFT:
         {
             // 检查行数是否相同
             assert(this->uRow == mat.uRow);
@@ -685,10 +803,10 @@ public:
             }
             return r;
         }
-        case MAT_RIGHT:
-            return mat.CombineWith(*this, MAT_LEFT);
+        case RIGHT:
+            return mat.CombineWith(*this, LEFT);
 
-        case MAT_ABOVE:
+        case ABOVE:
         {
             //检查列数是否相同
             assert(this->uCol == mat.uCol);
@@ -704,10 +822,10 @@ public:
 
             return r;
         }
-        case MAT_BELOW:
-            return mat.CombineWith(*this, MAT_ABOVE);
+        case BELOW:
+            return mat.CombineWith(*this, ABOVE);
 
-        case MAT_TOPLEFT:
+        case TOPLEFT:
         {
             Matrix<T> r(this->uRow + mat.uRow, this->uCol + mat.uCol);
             T *pHead = r.pData;
@@ -735,7 +853,7 @@ public:
             return r;
         }
 
-        case MAT_TOPRIGHT:
+        case TOPRIGHT:
         {
             Matrix<T> r(this->uRow + mat.uRow, this->uCol + mat.uCol);
             T *pHead = r.pData + this->uCol;
@@ -763,11 +881,11 @@ public:
             return r;
         }
 
-        case MAT_BOTLEFT:
-            return mat.CombineWith(*this, MAT_TOPRIGHT);
+        case BOTLEFT:
+            return mat.CombineWith(*this, TOPRIGHT);
 
-        case MAT_BOTRIGHT:
-            return mat.CombineWith(*this, MAT_TOPLEFT);
+        case BOTRIGHT:
+            return mat.CombineWith(*this, TOPLEFT);
 
         default:
             assert(0);
@@ -779,26 +897,29 @@ public:
      *  @brief 矩阵按行分解，保留指定方向的矩阵
      *  
      *  取值：
-     *  ON_ABOVE	2	保留分割行和其上方的部分
-     *  ON_BELOW	3	保留分割行和其下方的部分
+     *  ABOVE	保留分割行和其上方的部分
+     *  BELOW	保留分割行和其下方的部分
      * 
-     *  @param SplitterRowIndex		分割行的序号，从1开始，该行将被保留在返回的矩阵中
-     *  @param DIRECTION			分割保留的方向
+     *  若定义了MATRIX_INDEX_START_AT_0,则行列序号从0开始，
+     *  否则从1开始。
+     * 
+     *  @param SplitterRowIndex		分割行的序号，该行将被保留在返回的矩阵中
+     *  @param d			        分割保留的方向
      *   
      *  @return		分割后保留的部分构成的矩阵
      */
-    Matrix<T> RowSplit(size_t SplitterRowIndex, const size_t DIRECTION) const
+    Matrix<T> RowSplit(size_t SplitterRowIndex, Direction d) const
     {
         //n：结果矩阵的行数
         size_t n = SplitterRowIndex <= this->uRow ? SplitterRowIndex : this->uRow;
 
-        if (DIRECTION == MAT_ABOVE)
+        if (d == ABOVE)
         {
             Matrix<T> r(n, this->uCol);
             memcpy_s(r.pData, r.uRow * r.uCol * sizeof(T), this->pData, r.uRow * r.uCol * sizeof(T));
             return r;
         }
-        else if (DIRECTION == MAT_BELOW)
+        else if (d == BELOW)
         {
             Matrix<T> r(this->uRow - n + 1, this, uCol);
             memcpy_s(r.pData, r.uRow * r.uCol * sizeof(T), &this->ElemAt(n, 1), r.uRow * r.uCol * sizeof(T));
@@ -816,17 +937,20 @@ public:
      *  ON_LFET		0	保留分割列和其左边的部分
      *  ON_RIGHT	1	保留分割列和其右边的部分
      *   
-     *  @param SplitterRowIndex		分割列的序号，从1开始，该列将被保留在返回的矩阵中
-     *  @param DIRECTION			分割保留的方向
+     *  若定义了MATRIX_INDEX_START_AT_0,则行列序号从0开始，
+     *  否则从1开始。
+     *
+     *  @param SplitterRowIndex		分割列的序号，该列将被保留在返回的矩阵中
+     *  @param d			分割保留的方向
      *   
      *  @return		分割后保留的部分构成的矩阵
      */
-    Matrix<T> ColumnSplit(size_t SplitterColIndex, const size_t DIRECTION) const
+    Matrix<T> ColumnSplit(size_t SplitterColIndex, Direction d) const
     {
         //n：结果矩阵的列数
         size_t n = SplitterColIndex <= this->uCol ? SplitterColIndex : this->uCol;
 
-        if (DIRECTION == MAT_LEFT)
+        if (d == LEFT)
         {
             Matrix<T> r(uRow, n);
             T *pSubRowHead = r.pData;
@@ -841,7 +965,7 @@ public:
             }
             return r;
         }
-        else if (DIRECTION == MAT_RIGHT)
+        else if (d == RIGHT)
         {
             Matrix<T> r(uRow, this->uCol - n + 1);
             T *pSubRowHead = r.pData;
@@ -945,15 +1069,21 @@ public:
 
         使用初等变换函数相比左乘变换方阵更加高效
 
-        @param RowIndex1	第一个行序号，从1开始
-        @param RowIndex2	第二个行序号，从1开始
+        若定义了MATRIX_INDEX_START_AT_0,则行序号从0开始，
+        否则从1开始。
+
+        @param RowIndex1	第一个行序号
+        @param RowIndex2	第二个行序号
     */
     void RowInterchange(size_t RowIndex1, size_t RowIndex2)
     {
-        if (RowIndex1 > uRow || RowIndex2 > uRow || RowIndex1 == RowIndex2)
-            return;
+#ifdef MATRIX_INDEX_START_AT_0
+        ++RowIndex1;
+        ++RowIndex2;
+#endif
+        assert(RowIndex1 <= uRow && RowIndex2 <= uRow)
 
-        T *pRow1Head = &ElemAt(RowIndex1, 1);
+            T *pRow1Head = &ElemAt(RowIndex1, 1);
         T *pRow2Head = &ElemAt(RowIndex2, 1);
         T tmp;
         for (size_t i = 0; i < uCol; ++i)
@@ -970,12 +1100,18 @@ public:
         
         使用初等变换函数相比左乘变换方阵更加高效
 
-        @param RowIndex	目标行序号，从1开始
+        若定义了MATRIX_INDEX_START_AT_0,则行序号从0开始，
+        否则从1开始。
+
+        @param RowIndex	目标行序号
         @param k		系数，不可为0
     */
     void RowScaling(size_t RowIndex, const T &k)
     {
-        assert(RowIndex <= uRow || k != T(0));
+#ifdef MATRIX_INDEX_START_AT_0
+        ++RowIndex;
+#endif
+        assert(RowIndex <= uRow && k != T(0));
 
         T *pRowHead = &ElemAt(RowIndex, 1);
         for (size_t i = 0; i < uCol; ++i)
@@ -986,16 +1122,22 @@ public:
     /**
         @brief 矩阵初等变换：倍加行：将源行各数据乘以系数加到目标行对应数据。
         
-        使用初等变换函数相比左乘变换方阵更加高效
+        使用初等变换函数相比左乘变换方阵更加高效.
         
-        @param SrcRowIndex	源行序号，从1开始
+        若定义了MATRIX_INDEX_START_AT_0,则行序号从0开始，
+        否则从1开始。
+        
+        @param SrcRowIndex	源行序号
         @param k			系数，可以为0
-        @param TagRowIndex	目标行序号，从1开始
+        @param TagRowIndex	目标行序号
     */
     void RowAddition(size_t SrcRowIndex, const T &k, size_t TrgRowIndex)
     {
-        if (SrcRowIndex > uRow || TrgRowIndex > uRow)
-            return;
+#ifdef MATRIX_INDEX_START_AT_0
+        ++SrcRowIndex;
+        ++TrgRowIndex;
+#endif
+        assert(SrcRowIndex <= uRow && TrgRowIndex <= uRow);
 
         T *pSrcRowHead = &ElemAt(SrcRowIndex, 1);
         T *pTrgRowHead = &ElemAt(TrgRowIndex, 1);
@@ -1007,10 +1149,17 @@ public:
 public:
     /**
         @brief 清除某一行的数据
-        @param RowIndex	要清除的行序号，从1开始
+
+        若定义了MATRIX_INDEX_START_AT_0,则行序号从0开始，
+        否则从1开始。
+
+        @param RowIndex	要清除的行序号
     */
     void ClearRow(size_t RowIndex)
     {
+#ifdef MATRIX_INDEX_START_AT_0
+        ++RowIndex;
+#endif
         assert(RowIndex <= uRow);
 
         T *pRowHead = &ElemAt(RowIndex, 1);
@@ -1021,11 +1170,18 @@ public:
 public:
     /**
         @brief 清除某一列的数据
-        @param ColIndex	要清除的列序号，从1开始
+
+        若定义了MATRIX_INDEX_START_AT_0,则列序号从0开始，
+        否则从1开始。
+
+        @param ColIndex	要清除的列序号
     */
     void ClearColumn(size_t ColIndex)
     {
-        assert(ColIndex < uCol);
+#ifdef MATRIX_INDEX_START_AT_0
+        ++ColIndex;
+#endif
+        assert(ColIndex <= uCol);
 
         T *pColHead = &ElemAt(1, ColIndex);
         for (size_t i = 0; i < uRow; ++i)
@@ -1041,7 +1197,6 @@ public:
     */
     Matrix<T> Power(size_t n) const
     {
-        //判断是否为方阵
         assert(uRow == uCol);
 
         Matrix<T> r(uRow, uCol);
@@ -1203,12 +1358,12 @@ public:
         for (size_t i = 1; i <= E.uRow; ++i)
             E.ElemAt(i, i) = T(1);
         //将单位阵合并在矩阵右侧并行约化
-        Matrix<T> ReducedCombinedMat = this->CombineWith(E, MAT_RIGHT).RowReduce();
+        Matrix<T> ReducedCombinedMat = this->CombineWith(E, RIGHT).RowReduce();
         //判断矩阵是否满秩（可逆）
         assert(ReducedCombinedMat.RankOfReducedMatrix() == uRow);
 
         //将右侧部分分割并返回
-        return ReducedCombinedMat.ColumnSplit(this->uCol + 1, MAT_RIGHT);
+        return ReducedCombinedMat.ColumnSplit(this->uCol + 1, RIGHT);
     }
 
 public:
@@ -1343,7 +1498,7 @@ class Determinant
 {
 private:
     Matrix<T> *pMat;
-    size_t size = 1;
+    size_t size = 0;
 
 public:
     //构造函数
@@ -1378,6 +1533,18 @@ public:
                  dataLen > elemCount ? elemCount * sizeof(T) : dataLen * sizeof(T));
     }
 
+    /**
+     * @brief 行列式构造函数: 由方阵构造
+     * 
+     * @param mat 方阵
+     */
+    Determinant(const Matrix<T>& mat)
+    {
+        assert(mat.uRow == mat.uCol);
+        pMat = new Matrix<T>(mat);
+        size = mat.uRow;
+    }
+    
     /**
      * @brief 行列式拷贝构造函数
      * 
