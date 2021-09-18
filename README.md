@@ -5,8 +5,12 @@ Minimal matrix implementation in C++.
 
 ## Brief
 
-😄```Eigen``` compiles too slow?😄	😅Just want something simple and convenient?😅
+😄```Eigen``` compiles too slow?😄
+
+😅Just want something simple and convenient?😅
+
 **Take 5 minutes with this repo!**
+
 Basic implementations of Matrix object facilities and algebra algorithms are included. APIs are designed elegantly and fully equipped with parameter annotations(**in Chinese**).
 
 * Construct
