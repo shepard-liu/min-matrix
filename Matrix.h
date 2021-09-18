@@ -348,6 +348,7 @@ public:
     */
     Matrix(Matrix<T> &&mat) noexcept : uRow(mat.uRow), uCol(mat.uCol), pData(mat.pData), uCapacity(mat.uCapacity)
     {
+        std::cout << "Move Contructor called\n";
         mat.pData = nullptr;
     }
 
@@ -378,6 +379,8 @@ public:
     */
     Matrix<T> &operator=(Matrix<T> &&mat) noexcept
     {
+        std::cout << "Move Assignment called\n";
+
         if (&mat == this)
             return *this;
         this->uRow = mat.uRow;
@@ -890,6 +893,7 @@ public:
         default:
             assert(0);
         }
+        return Matrix<T>();
     }
 
 public:
@@ -925,8 +929,9 @@ public:
             memcpy_s(r.pData, r.uRow * r.uCol * sizeof(T), &this->ElemAt(n, 1), r.uRow * r.uCol * sizeof(T));
             return r;
         }
-        else
-            assert(0);
+
+        assert(0);
+        return Matrix<T>();
     }
 
 public:
@@ -980,8 +985,9 @@ public:
             }
             return r;
         }
-        else
-            assert(0);
+
+        assert(0);
+        return Matrix<T>();
     }
 
 public:
@@ -996,16 +1002,19 @@ public:
     {
         if ((mat1.uRow - mat2.uRow) || (mat1.uCol - mat2.uCol)) //如果行数列数不等
             return false;
-        else
-            return true;
+        return true;
     }
 
 public:
     //矩阵取负
     Matrix<T> operator-() const
     {
+        Matrix<T> resMat(uRow, uCol);
+        T *pResData = resMat.pData - 1;
+        T *pThisData = pData - 1;
         for (size_t i = 0; i < uRow * uCol; ++i)
-            pData[i] = -pData[i];
+            *(++pResData) = -*(++pThisData);
+        return resMat;
     }
 
 public:
@@ -1063,7 +1072,7 @@ public:
         return r;
     }
 
-public:
+private:
     /**
         @brief 矩阵初等变换：行交换：交换两行的数据。
 
@@ -1077,13 +1086,9 @@ public:
     */
     void RowInterchange(size_t RowIndex1, size_t RowIndex2)
     {
-#ifdef MATRIX_INDEX_START_AT_0
-        ++RowIndex1;
-        ++RowIndex2;
-#endif
-        assert(RowIndex1 <= uRow && RowIndex2 <= uRow)
+        assert(RowIndex1 <= uRow && RowIndex2 <= uRow);
 
-            T *pRow1Head = &ElemAt(RowIndex1, 1);
+        T *pRow1Head = &ElemAt(RowIndex1, 1);
         T *pRow2Head = &ElemAt(RowIndex2, 1);
         T tmp;
         for (size_t i = 0; i < uCol; ++i)
@@ -1094,7 +1099,7 @@ public:
         }
     }
 
-public:
+private: 
     /**
         @brief 矩阵初等变换：倍乘行：将目标行乘以k倍。
         
@@ -1108,9 +1113,6 @@ public:
     */
     void RowScaling(size_t RowIndex, const T &k)
     {
-#ifdef MATRIX_INDEX_START_AT_0
-        ++RowIndex;
-#endif
         assert(RowIndex <= uRow && k != T(0));
 
         T *pRowHead = &ElemAt(RowIndex, 1);
@@ -1118,7 +1120,7 @@ public:
             pRowHead[i] *= k;
     }
 
-public:
+private:
     /**
         @brief 矩阵初等变换：倍加行：将源行各数据乘以系数加到目标行对应数据。
         
@@ -1133,10 +1135,6 @@ public:
     */
     void RowAddition(size_t SrcRowIndex, const T &k, size_t TrgRowIndex)
     {
-#ifdef MATRIX_INDEX_START_AT_0
-        ++SrcRowIndex;
-        ++TrgRowIndex;
-#endif
         assert(SrcRowIndex <= uRow && TrgRowIndex <= uRow);
 
         T *pSrcRowHead = &ElemAt(SrcRowIndex, 1);
@@ -1401,7 +1399,7 @@ public:
     {
         Matrix<T> &&mat = Zeroes(size);
         for (size_t i = 1; i <= size; ++i)
-            mat.ElementAt(i, i) = T(1);
+            mat.ElemAt(i, i) = T(1);
         return mat;
     }
 
@@ -1538,13 +1536,13 @@ public:
      * 
      * @param mat 方阵
      */
-    Determinant(const Matrix<T>& mat)
+    Determinant(const Matrix<T> &mat)
     {
         assert(mat.uRow == mat.uCol);
         pMat = new Matrix<T>(mat);
         size = mat.uRow;
     }
-    
+
     /**
      * @brief 行列式拷贝构造函数
      * 
