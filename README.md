@@ -22,7 +22,7 @@ To add a row or column, you may invoke ```Matrix<T>::AddRow()``` or ```Matrix<T>
 
 * Customize Your experience
 
-Prefer using 1-based index with MATLAB 😀? Want to implement your business logic after a hard time with mathematical formulas:upside_down_face:? min-matrix comes to your help. By default, row or column indices begin with 1. If you wanna switch to 0-based which is loved by programmers, add ```#define MATRIX_INDEX_START_AT_0``` before you the matrix header file.
+Prefer using 1-based index with MATLAB 😀? Want to implement your business logic after a hard time with mathematical formulas:upside_down_face:? min-matrix comes to your help. **By default, row or column indices begin with 1**. If you wanna switch to 0-based which is loved by programmers, add ```#define MATRIX_INDEX_START_AT_0``` before you the matrix header file.
     
 * More
 
