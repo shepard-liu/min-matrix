@@ -435,7 +435,7 @@ public:
 
 private:
     //数据扩增
-    bool Expand()
+    void Expand()
     {
         T *pOldData = pData;
         pData = new T[uCapacityIncrement * uCapacity];
@@ -443,7 +443,6 @@ private:
         memcpy_s(pData, sizeof(T) * uCapacity, pOldData, sizeof(T) * uCapacity);
         uCapacity *= uCapacityIncrement;
         delete[] pOldData;
-        return true;
     }
 
 protected:
@@ -543,6 +542,45 @@ private:
 
 public:
     /**
+     * @brief 遍历矩阵元素
+     * 
+     * @param pOps 对每个元素执行的操作
+     * @return Matrix<T>& 本对象的引用
+     */
+    Matrix<T> &forEach(bool (*pOps)(T &))
+    {
+        auto ps = pData - 1;
+        auto pe = pData + uCol * uRow;
+        while (ps != pe)
+            if (!pOps(*(++ps)))
+                break;
+        return *this;
+    }
+
+public:
+    /**
+     * @brief 遍历矩阵元素
+     * 
+     * @param pOps 对每个元素执行的操作(函数指针)
+     * @return Matrix<T>& 本对象的引用
+     */
+    Matrix<T> &forEach(bool (*pOps)(T &, size_t))
+    {
+        auto ps = pData - 1;
+        auto pe = pData + uCol * uRow;
+#ifdef MATRIX_INDEX_START_AT_0
+        size_t idx = -1;
+#else
+        size_t idx = 0;
+#endif
+        while (ps != pe)
+            if (!pOps(*(++ps), ++idx))
+                break;
+        return *this;
+    }
+
+public:
+    /**
         @brief 在矩阵中插入一行数据，可能会引起数据扩增
 
         若定义了MATRIX_INDEX_START_AT_0,则行列序号从0开始，
@@ -551,8 +589,9 @@ public:
         @param pos			要插入到的行序号
         @param pNewRowData	要插入的行数据的指针
         @param dataSize		要插入的行数据的个数，若少于列数，将使用0补齐
+        @return Matrix<T>&  本对象的引用
     */
-    void InsertRow(size_t pos, const T *pNewRowData, size_t dataSize)
+    Matrix<T> &InsertRow(size_t pos, const T *pNewRowData, size_t dataSize)
     {
 #ifdef MATRIX_INDEX_START_AT_0
         ++pos;
@@ -564,8 +603,8 @@ public:
         size_t n = uCol < dataSize ? uCol : dataSize;
 
         //检查容量是否充足，否则分配内存
-        if ((uRow + 1) * uCol < uCapacity && !Expand())
-            assert(0);
+        if ((uRow + 1) * uCol < uCapacity)
+            Expand();
 
         //向后移动数据
         //获取末尾元素指针
@@ -580,6 +619,8 @@ public:
             *(pNewRowHead + i) = pNewRowData[i];
         for (size_t i = n; i < uCol; ++i) //用0把这行填满
             *(pNewRowHead + i) = T(0);
+
+        return *this;
     }
 
 public:
@@ -592,10 +633,11 @@ public:
         @param pos			要插入到的行序号
         @param pNewRowData	要插入的行数据的指针
         @param dataSize		要插入的行数据的个数，若少于列数，将使用0补齐
+        @return Matrix<T>&  本对象的引用
     */
-    void InsertRow(size_t pos, const std::vector<T> &rowData)
+    Matrix<T> &InsertRow(size_t pos, const std::vector<T> &rowData)
     {
-        InsertRow(pos, rowData.data(), rowData.size());
+        return InsertRow(pos, rowData.data(), rowData.size());
     }
 
 public:
@@ -608,8 +650,9 @@ public:
         @param pos			要插入到的列序号
         @param pNewRowData	要插入的列数据的指针
         @param dataSize		要插入的列数据的个数，若少于行数，将使用0补齐
+        @return Matrix<T>&  本对象的引用
     */
-    bool InsertColumn(size_t pos, const T *pNewColData, size_t dataSize)
+    Matrix<T> &InsertColumn(size_t pos, const T *pNewColData, size_t dataSize)
     {
 #ifdef MATRIX_INDEX_START_AT_0
         ++pos;
@@ -621,8 +664,8 @@ public:
         size_t n = uRow < dataSize ? uRow : dataSize;
 
         //检查容量是否充足，否则分配内存
-        if (uRow * (uCol + 1) < uCapacity && !Expand())
-            return false;
+        if (uRow * (uCol + 1) < uCapacity)
+            Expand();
 
         //向后移动数据--------------
         //获取末尾元素指针
@@ -647,7 +690,7 @@ public:
         for (size_t i = n; i < uRow; ++i)
             *(pBlankPos + i * uCol) = T(0);
 
-        return true;
+        return *this;
     }
 
 public:
@@ -659,10 +702,11 @@ public:
 
         @param pos		要插入到的列序号
         @param colData	要插入的列数据
+        @return Matrix<T>&  本对象的引用
     */
-    void InsertColumn(size_t pos, const std::vector<T> &colData)
+    Matrix<T> &InsertColumn(size_t pos, const std::vector<T> &colData)
     {
-        InsertColumn(pos, colData.data(), colData.size());
+        return InsertColumn(pos, colData.data(), colData.size());
     }
 
 public:
@@ -671,13 +715,14 @@ public:
 
         @param pNewRowData	要添加的行数据的指针
         @param dataSize		要添加的行数据的个数，若少于列数，将使用0补齐
+        @return Matrix<T>&  本对象的引用
     */
-    void AddRow(const T *pNewRowData, size_t dataSize)
+    Matrix<T> &AddRow(const T *pNewRowData, size_t dataSize)
     {
 #ifdef MATRIX_INDEX_START_AT_0
-        InsertRow(uRow, pNewRowData, dataSize);
+        return InsertRow(uRow, pNewRowData, dataSize);
 #else
-        InsertRow(uRow + 1, pNewRowData, dataSize);
+        return InsertRow(uRow + 1, pNewRowData, dataSize);
 #endif
     }
 
@@ -686,13 +731,14 @@ public:
         @brief 矩阵最下方添加一行数据，可能会引起数据扩增
 
         @param rowData	要添加的行数据
+        @return Matrix<T>&  本对象的引用
     */
-    void AddRow(const std::vector<T> &rowData)
+    Matrix<T> &AddRow(const std::vector<T> &rowData)
     {
 #ifdef MATRIX_INDEX_START_AT_0
-        InsertRow(uRow, rowData.data(), rowData.size());
+        return InsertRow(uRow, rowData.data(), rowData.size());
 #else
-        InsertRow(uRow + 1, rowData.data(), rowData.size());
+        return InsertRow(uRow + 1, rowData.data(), rowData.size());
 #endif
     }
 
@@ -702,13 +748,14 @@ public:
 
         @param pNewColData	要添加的列数据的指针
         @param dataSize		要添加的列数据的个数，若少于行数，将使用0补齐
+        @return Matrix<T>&  本对象的引用
     */
-    void AddColumn(const T *pNewColData, size_t dataSize)
+    Matrix<T> &AddColumn(const T *pNewColData, size_t dataSize)
     {
 #ifdef MATRIX_INDEX_START_AT_0
-        InsertColumn(uCol, pNewColData, dataSize);
+        return InsertColumn(uCol, pNewColData, dataSize);
 #else
-        InsertColumn(uCol + 1, pNewColData, dataSize);
+        return InsertColumn(uCol + 1, pNewColData, dataSize);
 #endif
     }
 
@@ -717,13 +764,14 @@ public:
         @brief 矩阵最右侧添加一列数据，可能会引起数据扩增
 
         @param colData	要添加的列数据的指针
+        @return Matrix<T>&  本对象的引用
     */
-    void AddColumn(const std::vector<T> &colData)
+    Matrix<T> &AddColumn(const std::vector<T> &colData)
     {
 #ifdef MATRIX_INDEX_START_AT_0
-        InsertColumn(uCol, colData.data(), colData.size());
+        return InsertColumn(uCol, colData.data(), colData.size());
 #else
-        InsertColumn(uCol + 1, colData.data(), colData.size());
+        return InsertColumn(uCol + 1, colData.data(), colData.size());
 #endif
     }
 
@@ -1099,7 +1147,7 @@ private:
         }
     }
 
-private: 
+private:
     /**
         @brief 矩阵初等变换：倍乘行：将目标行乘以k倍。
         
