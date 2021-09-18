@@ -547,7 +547,7 @@ public:
      * @param pOps 对每个元素执行的操作
      * @return Matrix<T>& 本对象的引用
      */
-    Matrix<T> &forEach(bool (*pOps)(T &))
+    Matrix<T> &ForEach(bool (*pOps)(T &))
     {
         auto ps = pData - 1;
         auto pe = pData + uCol * uRow;
@@ -564,7 +564,7 @@ public:
      * @param pOps 对每个元素执行的操作(函数指针)
      * @return Matrix<T>& 本对象的引用
      */
-    Matrix<T> &forEach(bool (*pOps)(T &, size_t))
+    Matrix<T> &ForEach(bool (*pOps)(T &, size_t))
     {
         auto ps = pData - 1;
         auto pe = pData + uCol * uRow;
