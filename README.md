@@ -1,6 +1,7 @@
 # min-matrix
 Minimal matrix implementation in C++.
-:hugs:Pull Request:hugs:  :sunglasses:Post Issues:sunglasses:
+
+:hugs:[Pull Request](https://github.com/shepard-liu/min-matrix/pulls/):hugs:  :sunglasses:[Post Issues](https://github.com/shepard-liu/min-matrix/issues/):sunglasses:
 
 ## Brief
 
