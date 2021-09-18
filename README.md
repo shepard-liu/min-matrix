@@ -3,11 +3,25 @@ Minimal matrix implementation in C++
 
 ## Brief
 
-Basic implementations of algebra algorithms are included. 
+Basic implementations of Matrix object facilities and algebra algorithms are included. 
+
+* Construct
 
 ```Matrix<T>``` is a well-designed matrix class that provides convenient constructors and generation functions like ```Matrix<T>::Zeroes()```, ```Matrix<T>::Identity()```, ```Matrix<T>::Ones()```, ```Matrix<T>::Rand()```. Constructors like ```Matrix<T>::Matrix(const std::string &expr)``` and ```Matrix(std::initializer_list<std::initializer_list<T>> iList)``` parse MATLAB-style literals after performing semantic checks.
 
+* Matrix Operations
 
+'+', '-' and '*' are overloaded to support add, substract and matrix multiply respectively.
+Member functions such as ```Matrix<T>::Power()```, ```Matrix<T>::Transpose()``` and ```Matrix<T>::Inverse()``` perform basic algebra algorithms.
+
+* Easy-to-use Manipulation Methods
+
+To add a row or column, you may invoke ```Matrix<T>::AddRow()`` or ```Matrix<T>::AddColumn```. 
+```Matrix<T>::CombineWith()``` handles concatenation of two matrices with ease.
+
+* Customize Your experience
+
+Prefer using 1-based index with MATLAB 😀? Want to implement your business logic after a hard time with mathematical formulas? min-matrix comes to your help. By default, row or column indices begin with 1. If you wanna switch to 0-based which is loved by programmers, add ```#define MATRIX_INDEX_START_AT_0
 
 ## Documentation (update later)
 
