@@ -5,7 +5,9 @@ Minimal matrix implementation in C++.
 
 ## Brief
 
-Basic implementations of Matrix object facilities and algebra algorithms are included. 
+😄```Eigen``` compiles too slow?😄	😅Just want something simple and convenient?😅
+**Take 5 minutes with this repo!**
+Basic implementations of Matrix object facilities and algebra algorithms are included. APIs are designed elegantly and fully equipped with parameter annotations(**in Chinese**).
 
 * Construct
 
@@ -184,7 +186,7 @@ Discover by yourself down below:grin:!
     mat12.ElemAt(1, 2);  // 1
     ```
     
-    In order to traverse the matrix elements and modify them, you surely can write a for statement yourself. However, you may also pass a lambda function as a parameter to ```Matrix<T>::ForEach```.
+    In order to traverse the matrix elements and modify them, you surely can write a for statement yourself. However, you may also pass a lambda function as a parameter to ```Matrix<T>::ForEach()```.
 
     ```C++
     // Traverse
