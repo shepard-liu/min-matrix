@@ -1,5 +1,6 @@
 # min-matrix
-Minimal matrix implementation in C++
+Minimal matrix implementation in C++.
+:hugs:Pull Request:hugs:  :sunglasses:Post Issues:sunglasses:
 
 ## Brief
 
@@ -21,14 +22,16 @@ To add a row or column, you may invoke ```Matrix<T>::AddRow()`` or ```Matrix<T>:
 
 * Customize Your experience
 
-Prefer using 1-based index with MATLAB 😀? Want to implement your business logic after a hard time with mathematical formulas? min-matrix comes to your help. By default, row or column indices begin with 1. If you wanna switch to 0-based which is loved by programmers, add ```#define MATRIX_INDEX_START_AT_0
+Prefer using 1-based index with MATLAB 😀? Want to implement your business logic after a hard time with mathematical formulas:upside_down_face:? min-matrix comes to your help. By default, row or column indices begin with 1. If you wanna switch to 0-based which is loved by programmers, add ```#define MATRIX_INDEX_START_AT_0``` before you the matrix header file.
+    
+* More
 
-## Documentation (update later)
+Discover by yourself down below:grin:!
 
-////////////////////////////////
-//         Contructors        //
-////////////////////////////////
+## Tutorials
 
+1. Constructing a matrix object    
+```C++
 // Default constructor
 Matrix<double> mat0();
 // Constuct a matrix of 5 rows and 3 columns
@@ -99,6 +102,7 @@ VX(mat5);
 // a rvalue can be efficiently reused
 Matrixd mat6(mat4 * mat4);
 Matrixd mat7 = mat4 * mat4;
+```
 
 ////////////////////////////////
 //         Generators         //
