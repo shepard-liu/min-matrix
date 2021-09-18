@@ -33,6 +33,7 @@ Discover by yourself down below:grin:!
 1. Constructing a matrix object
 
     * Basic constructors
+    
     Construct a Matrix object by defining the size.
     
     ```C++
@@ -43,6 +44,7 @@ Discover by yourself down below:grin:!
     ```
     
     * Data constructors
+    
     Construct a Matrix object by defining the size and supplying data linearly.
     
     ```C++
@@ -86,6 +88,7 @@ Discover by yourself down below:grin:!
     ```
     
     * Special Constructors
+    
     You don't have to specify the row or column size but to provide structured data to construct an object.
     
     ```C++
@@ -101,6 +104,8 @@ Discover by yourself down below:grin:!
     ```
     If a semantic issue is detected, the constructor function prints out a error message on the console. 
     
+    TODO: ADD A ILLUSTRATION
+    
     ```C++
     // Nested InitializerList can be used
     Matrixd mat5({ {2, 3}, {9, 5} });
@@ -110,18 +115,11 @@ Discover by yourself down below:grin:!
         9  5
     */
     ```
-    In both constructors above, the column size of the matrix is infered from the _first row_ data provided. Be sure that all rows have equivalent amount of elements.
-    
-    // Matrix<> provides a move constructor and move assignment operator
-    // a rvalue can be efficiently reused
-    Matrixd mat6(mat4 * mat4);
-    Matrixd mat7 = mat4 * mat4;
-    ```
+    In both constructors above, the column size of the matrix is infered from the **first row** data provided. Be sure that all rows have equivalent amount of elements.
 
-    ////////////////////////////////
-    //         Generators         //
-    ////////////////////////////////
+2. Generate a special or frequenly-used matrix
 
+    ```C++
     // Special matrix can be generated with static member functions
     Matrixd mat8 = Matrixd::Identity(3);
     /*
@@ -130,7 +128,6 @@ Discover by yourself down below:grin:!
         0	1	0
         0	0	1
     */
-    VX(mat8);
 
     Matrixd mat9 = Matrixd::Zeroes(4);
     /*
@@ -140,7 +137,6 @@ Discover by yourself down below:grin:!
         0	0	0	0
         0	0	0	0
     */
-    VX(mat9);
 
     Matrixd mat10 = Matrixd::Ones(2);
     /*
@@ -148,17 +144,19 @@ Discover by yourself down below:grin:!
         1	1
         1	1
     */
-    VX(mat10);
 
     Matrixd mat11 = Matrixd::Rand(3, 2);
     // mat11 will be a matrix of 3 rows and 2 columns with
     // random elements uniformly distributed between 0.0~1.0
-    VX(mat11);
+    /*
+        mat11
+        I have no idea how it'll be like.
+    */
+    ```
+    
+3. Modify Elements
 
-    ////////////////////////////////
-    //       Modify Elements      //
-    ////////////////////////////////
-
+    ```C++
     // In most libraries matrix index(row or column) begin with 0,
     // while in MATLAB it is 1. So we leave it up to users that if
     // macro MATRIX_INDEX_START_AT_0 is defined before you include
@@ -175,19 +173,16 @@ Discover by yourself down below:grin:!
         3	4	5
     */
     mat12(1, 2);
-    VX(mat12(1, 2));
     //if defined MATRIX_INDEX_START_AT_0 		: 5
     //if not defined MATRIX_INDEX_START_AT_0	: 1
 
     mat12.ElemAt0(1, 2); // 5
     mat12.ElemAt(1, 2);  // 1
-    VX(mat12.ElemAt0(1, 2));
-    VX(mat12.ElemAt(1, 2));
+    ```
 
-    ////////////////////////////////
-    //  Basic Matrix Operations   //
-    ////////////////////////////////
+4. Basic matrix operations
 
+    ```C++
     Matrixd mat13_1(2, 3, {1, 3, 4, 2, 5, 9});
     Matrixd mat13_2(2, 3, {1, -1, 3, -2, 2, -4});
     Matrixd mat13_3(3, 3, {1, 1, 2, 2, 5, 2, 0, 4, 2});
@@ -199,7 +194,6 @@ Discover by yourself down below:grin:!
         2    2    7
         0    7    5
     */
-    VX(mat13_4);
 
     // Substract
     Matrixd mat13_5_1 = mat13_1 - mat13_2;
@@ -208,7 +202,6 @@ Discover by yourself down below:grin:!
         0   4   1
         4   3   13
     */
-    VX(mat13_5_1);
 
     // Negative
     Matrixd mat13_5_2 = -mat13_1;
@@ -217,7 +210,6 @@ Discover by yourself down below:grin:!
         -1   -3   -4
         -2   -5   -9
     */
-    VX(mat13_5_2);
 
     // Multiply
     Matrixd mat13_6 = mat13_2 * mat13_3;
@@ -226,7 +218,6 @@ Discover by yourself down below:grin:!
         -1   8    6
         2    -8   -8
     */
-    VX(mat13_6);
 
     // Power
     Matrixd mat13_7 = mat13_3.Power(3); //mat13_3 * mat13_3 * mat13_3
@@ -236,7 +227,6 @@ Discover by yourself down below:grin:!
         82    259    130
         64    196    96
     */
-    VX(mat13_7);
 
     // Transpose
     Matrixd mat13_8 = mat13_1.Transpose();
@@ -246,7 +236,6 @@ Discover by yourself down below:grin:!
         3    5
         4    9
     */
-    VX(mat13_8);
 
     // Row Reduce
     Matrixd mat13_9 = mat13_3.RowReduce();
@@ -256,17 +245,14 @@ Discover by yourself down below:grin:!
         0   1   0
         0   0   1
     */
-    VX(mat13_9);
 
     // Rank
     size_t rank = mat13_3.Rank();
-    // 3
-    VX(rank);
+    // rank == 3
 
     // Inverse
     if(mat13_3.Invertible()){
         Matrixd mat13_10 = mat13_3.Inverse();
-        VX(mat13_10);
     }
     /*
     mat13_10
@@ -274,11 +260,11 @@ Discover by yourself down below:grin:!
         -0.285714    0.142857     0.142857
         0.571429     -0.285714    0.214286
     */
+    ```
+    
+5. Matrix concatenation
 
-    ////////////////////////////////
-    //       Concatenation        //
-    ////////////////////////////////
-
+    ```C++
     Matrixd mat14({{2, 3, 4}, {3, 4, 5}, {5, 6, 7}});
     Matrixd mat15 = mat14.CombineWith(Matrixd::Identity(3), Matrixd::RIGHT);
     /*
@@ -287,12 +273,11 @@ Discover by yourself down below:grin:!
         3   4   5   0   1   0
         5   6   7   0   0   1
     */
-    VX(mat15);
+    ```
 
-    ////////////////////////////////
-    //   Modify Rows and Columns  //
-    ////////////////////////////////
-
+6. Modify an entire row or column
+    
+    ```C++
     Matrixd mat16({{2, 3, 4}, {3, 4, 5}, {5, 6, 7}});
     mat16.ClearColumn(1);
     /*
@@ -301,7 +286,6 @@ Discover by yourself down below:grin:!
         3   0   5
         5   0   7
     */
-    VX(mat16);
 
     mat16.AddColumn({2, 4, 5});
     /*
@@ -310,7 +294,6 @@ Discover by yourself down below:grin:!
         3   0   5   4
         5   0   7   5
     */
-    VX(mat16);
 
     mat16.InsertRow(0, {-1, -1, -1, -1});
     /*
@@ -320,13 +303,13 @@ Discover by yourself down below:grin:!
         3   0   5   4
         5   0   7   5
     */
-    VX(mat16);
+    ```
+    TODO: ADD TRAVERSE AND BLOCK
 
-    ////////////////////////////////
-    //         Determinent        // 
-    ////////////////////////////////
+7. Determinant evaluate
 
+    ```C++
     Matrixd mat17({{2, 1, 4}, {0, 2, 5}, {9, 6, 7}});
     double detValue = Determinant<double>(mat17).Value();
-    // -59
-    VX(detValue);
+    // detValue == -59
+    ```
