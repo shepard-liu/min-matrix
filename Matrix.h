@@ -348,7 +348,6 @@ public:
     */
     Matrix(Matrix<T> &&mat) noexcept : uRow(mat.uRow), uCol(mat.uCol), pData(mat.pData), uCapacity(mat.uCapacity)
     {
-        std::cout << "Move Contructor called\n";
         mat.pData = nullptr;
     }
 
@@ -379,8 +378,6 @@ public:
     */
     Matrix<T> &operator=(Matrix<T> &&mat) noexcept
     {
-        std::cout << "Move Assignment called\n";
-
         if (&mat == this)
             return *this;
         this->uRow = mat.uRow;
@@ -418,7 +415,7 @@ public:
         获取矩阵的行数
         @return 矩阵的行数
     */
-    size_t RowSize()
+    size_t RowSize() const
     {
         return uRow;
     }
@@ -428,7 +425,7 @@ public:
         获取矩阵的列数
         @return 矩阵的列数
     */
-    size_t ColumnSize()
+    size_t ColumnSize() const
     {
         return uCol;
     }
@@ -512,6 +509,23 @@ public:
 
 public:
     /**
+        @brief 元素访问与修改，行列序号从1开始
+
+        该函数的行列序号始终从1开始，无论 MATRIX_INDEX_START_AT_0
+        是否被定义
+
+        @param row 元素所在的行数，从1开始
+        @param col 元素所在的列数，从1开始
+        @return 矩阵元素的引用
+    */
+    inline const T &ElemAt(size_t row, size_t col) const
+    {
+        assert(row > 0 && col > 0 && row <= uRow && col <= uCol);
+        return pData[(row - 1) * uCol + col - 1];
+    }
+
+public:
+    /**
         @brief 元素访问与修改，行列序号从0开始
 
         该函数的行列序号始终从0开始，无论 MATRIX_INDEX_START_AT_0
@@ -522,6 +536,23 @@ public:
         @return 矩阵元素的引用
     */
     inline T &ElemAt0(size_t row, size_t col)
+    {
+        assert(row < uRow && col < uCol);
+        return pData[row * uCol + col];
+    }
+
+public:
+    /**
+        @brief 元素访问与修改，行列序号从0开始
+
+        该函数的行列序号始终从0开始，无论 MATRIX_INDEX_START_AT_0
+        是否被定义
+
+        @param row 元素所在的行数，从0开始
+        @param col 元素所在的列数，从0开始
+        @return 矩阵元素的引用
+    */
+    inline const T &ElemAt0(size_t row, size_t col) const
     {
         assert(row < uRow && col < uCol);
         return pData[row * uCol + col];
@@ -1537,7 +1568,7 @@ inline Matrix<T> operator*(const T &c, const Matrix<T> &mat)
 /**
  * @brief 行列式
  * 
- * @tparam 行列式数据类型 
+ * @tparam T 行列式数据类型 
  */
 template <typename T>
 class Determinant
