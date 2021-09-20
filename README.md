@@ -11,9 +11,9 @@ Minimal matrix implementation in C++.
 
 **Take 5 minutes with this repo!**
 
-Basic implementations of Matrix object facilities and algebra algorithms are included. APIs are designed elegantly and fully equipped with parameter annotations(**in Chinese**).
+Basic implementations of Matrix object facilities and linear algebra algorithms are included. APIs are designed elegantly and fully equipped with parameter annotations(**in Chinese**).
 
-* Construct
+* Construct!
 
 ```Matrix<T>``` is a well-designed matrix class that provides convenient constructors and generation functions like ```Matrix<T>::Zeroes()```, ```Matrix<T>::Identity()```, ```Matrix<T>::Ones()```, ```Matrix<T>::Rand()```. Constructors like ```Matrix<T>::Matrix(const std::string &expr)``` and ```Matrix(std::initializer_list<std::initializer_list<T>> iList)``` parse MATLAB-style literals after performing semantic checks.
 
