@@ -10,8 +10,9 @@
 //#     矩阵元素访问函数 operator()() 行列序号默认从1开始，若要使用0作为序号起始，请在包含本
 //# 头文件前定义宏 MATRIX_INDEX_START_AT_0:
 //#
-//#      MATRIX_INDEX_START_AT_0
-//#
+//#      #define MATRIX_INDEX_START_AT_0
+//#      
+//#     矩阵的数据以行存储（Row Major）
 //#																	2020/08/05
 //#																	Shepard Liu
 //#								   Version:0.1
@@ -1538,6 +1539,7 @@ public:
 
     要求矩阵数据T类已重载流输出运算符
 */
+#include <iomanip>
 template <typename T>
 std::ostream &operator<<(std::ostream &os, const Matrix<T> &mat)
 {
@@ -1545,9 +1547,8 @@ std::ostream &operator<<(std::ostream &os, const Matrix<T> &mat)
     os << "[\n";
     for (size_t i = 1; i <= mat.uRow; ++i)
     {
-        os << '\t';
         for (size_t j = 0; j < mat.uCol; ++j)
-            os << pRowHead[j] << "\t";
+            os << std::setw(12) << std::setfill(' ') << std::setprecision(4) << pRowHead[j];
         os << '\n';
         pRowHead += mat.uCol;
     }
