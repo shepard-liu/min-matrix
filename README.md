@@ -173,8 +173,8 @@ Discover by yourself down below:grin:!
     
 3. Modify Elements
 
-     In most libraries matrix index(row or column) begin with 0, while in MATLAB it is 1. So we leave it up to users that if macro MATRIX_INDEX_START_AT_0 is defined before you include "Matrix.h", the beginning index will be. This setting up will only affect the implementation of ```Matrix<T>::operator()```. Other functions like ```ElemAt()```, ```ElemAt0()``` acts as the document says anyway.
-
+     In most libraries matrix index(row or column) begin with 0, while in MATLAB it is 1. So we leave it up to users that if macro MATRIX_INDEX_START_AT_0 is defined before you include "Matrix.h", the beginning index will be. This customization will affect the implementation of ```Matrix<T>::operator()``` and other functions that take row or column index as a parameter. Exceptionally, `Matrix<T>::ElemAt0()` and `Matrix<T>::ElemAt()` will not be influenced.
+     
     ```C++
     Matrixd mat12(2, 3, {0, 1, 2, 3, 4, 5});
     /*
@@ -208,6 +208,8 @@ Discover by yourself down below:grin:!
 		3	4	5
 	*/
     ```
+    
+    You may terminate the loop by returning false inside the lambda function. 
 
 4. Basic matrix operations
 
