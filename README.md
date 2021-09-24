@@ -348,7 +348,7 @@ Discover by yourself down below:grin:!
     */
     ```
 
-7. Determinant evaluate
+7. Determinant evaluation
 
     ```C++
     Matrixd mat17({{2, 1, 4}, {0, 2, 5}, {9, 6, 7}});
