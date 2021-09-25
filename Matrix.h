@@ -827,7 +827,7 @@ public:
         --rowStart;
         --colStart;
 #endif
-        assert(rowStart > 0 && rowStart <= uRow && colStart > 0 && colStart <= uCol);
+        assert(rowStart < uRow && colStart < uCol);
         rowSpan = rowSpan + rowStart > uRow ? uRow - rowStart : rowSpan;
         colSpan = colSpan + colStart > uCol ? uCol - colStart : colSpan;
 
@@ -1549,7 +1549,7 @@ std::ostream &operator<<(std::ostream &os, const Matrix<T> &mat)
     {
         for (size_t j = 0; j < mat.uCol; ++j)
             os << std::setw(12) << std::setfill(' ') << std::setprecision(4) << pRowHead[j];
-        os << '\n';
+        os << ";\n";
         pRowHead += mat.uCol;
     }
     os << "]\n";
