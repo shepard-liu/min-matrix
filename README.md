@@ -11,9 +11,9 @@ Minimal matrix implementation in C++.
 
 **Take 5 minutes with this repo!**
 
-Basic implementations of Matrix object facilities and algebra algorithms are included. APIs are designed elegantly and fully equipped with parameter annotations(**in Chinese**).
+Basic implementations of Matrix object facilities and linear algebra algorithms are included. APIs are designed elegantly and fully equipped with parameter annotations(**in Chinese**).
 
-* Construct
+* Construct!
 
 ```Matrix<T>``` is a well-designed matrix class that provides convenient constructors and generation functions like ```Matrix<T>::Zeroes()```, ```Matrix<T>::Identity()```, ```Matrix<T>::Ones()```, ```Matrix<T>::Rand()```. Constructors like ```Matrix<T>::Matrix(const std::string &expr)``` and ```Matrix(std::initializer_list<std::initializer_list<T>> iList)``` parse MATLAB-style literals after performing semantic checks.
 
@@ -29,7 +29,7 @@ To add a row or column, you may invoke ```Matrix<T>::AddRow()``` or ```Matrix<T>
 
 * Customize Your experience
 
-Prefer using 1-based index with MATLAB 😀? Want to implement your business logic after a hard time with mathematical formulas:upside_down_face:? min-matrix comes to your help. **By default, row or column indices begin with 1**. If you wanna switch to 0-based which is loved by programmers, add ```#define MATRIX_INDEX_START_AT_0``` before you the matrix header file.
+Prefer using 1-based index with MATLAB 😀? Want to implement your business logic after a hard time with mathematical formulas:upside_down_face:? min-matrix comes to your help. **By default, row or column indices begin with 1**. If you wanna switch to 0-based which is loved by programmers, add ```#define MATRIX_INDEX_START_AT_0``` before you include the matrix header file.
     
 * More
 
@@ -173,8 +173,8 @@ Discover by yourself down below:grin:!
     
 3. Modify Elements
 
-     In most libraries matrix index(row or column) begin with 0, while in MATLAB it is 1. So we leave it up to users that if macro MATRIX_INDEX_START_AT_0 is defined before you include "Matrix.h", the beginning index will be. This setting up will only affect the implementation of ```Matrix<T>::operator()```. Other functions like ```ElemAt()```, ```ElemAt0()``` acts as the document says anyway.
-
+     In most libraries matrix index(row or column) begin with 0, while in MATLAB it is 1. So we leave it up to users that if macro MATRIX_INDEX_START_AT_0 is defined before you include "Matrix.h", the beginning index will be. This customization will affect the implementation of ```Matrix<T>::operator()``` and other functions that take row or column index as a parameter. Exceptionally, `Matrix<T>::ElemAt0()` and `Matrix<T>::ElemAt()` will not be influenced.
+     
     ```C++
     Matrixd mat12(2, 3, {0, 1, 2, 3, 4, 5});
     /*
@@ -208,6 +208,8 @@ Discover by yourself down below:grin:!
 		3	4	5
 	*/
     ```
+    
+    You may terminate the loop by returning false inside the lambda function. 
 
 4. Basic matrix operations
 
@@ -346,7 +348,7 @@ Discover by yourself down below:grin:!
     */
     ```
 
-7. Determinant evaluate
+7. Determinant evaluation
 
     ```C++
     Matrixd mat17({{2, 1, 4}, {0, 2, 5}, {9, 6, 7}});
