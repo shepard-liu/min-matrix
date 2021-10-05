@@ -37,7 +37,7 @@ Discover by yourself down below:grin:!
 
 ## Tutorials
 
-1. Constructing a matrix object
+### Constructing a matrix object
 
     * Basic constructors
     
@@ -134,7 +134,7 @@ Discover by yourself down below:grin:!
     ```
     In both constructors above, the column size of the matrix is infered from the **first row** data provided. Be sure that all rows have equivalent amount of elements.
 
-2. Generate a special or frequenly-used matrix
+### Generate a special or frequenly-used matrix
 
     ```C++
     // Special matrix can be generated with static member functions
@@ -171,7 +171,7 @@ Discover by yourself down below:grin:!
     */
     ```
     
-3. Modify Elements
+### Modify Elements
 
      In most libraries matrix index(row or column) begin with 0, while in MATLAB it is 1. So we leave it up to users that if macro MATRIX_INDEX_START_AT_0 is defined before you include "Matrix.h", the beginning index will be. This customization will affect the implementation of ```Matrix<T>::operator()``` and other functions that take row or column index as a parameter. Exceptionally, `Matrix<T>::ElemAt0()` and `Matrix<T>::ElemAt()` will not be influenced.
      
@@ -211,7 +211,7 @@ Discover by yourself down below:grin:!
     
     You may terminate the loop by returning false inside the lambda function. 
 
-4. Basic matrix operations
+### Basic matrix operations
 
     ```C++
     Matrixd mat13_1(2, 3, {1, 3, 4, 2, 5, 9});
@@ -293,7 +293,7 @@ Discover by yourself down below:grin:!
     */
     ```
     
-5. Matrix concatenation
+### Matrix concatenation
 
     ```C++
     Matrixd mat14({{2, 3, 4}, {3, 4, 5}, {5, 6, 7}});
@@ -306,7 +306,7 @@ Discover by yourself down below:grin:!
     */
     ```
 
-6. Modify an entire row or column
+### Modify an entire row or column
     
     ```C++
     Matrixd mat16({{2, 3, 4}, {3, 4, 5}, {5, 6, 7}});
@@ -348,7 +348,7 @@ Discover by yourself down below:grin:!
     */
     ```
 
-7. Determinant evaluation
+### Determinant evaluation
 
     ```C++
     Matrixd mat17({{2, 1, 4}, {0, 2, 5}, {9, 6, 7}});
